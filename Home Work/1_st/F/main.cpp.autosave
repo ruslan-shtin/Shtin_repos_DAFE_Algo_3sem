@@ -1,0 +1,28 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int number_of_required_edges(const vector<vector<int>>& Graph)
+{
+    
+}
+
+
+int main()
+{
+    int V, E;
+    scanf("%d", &V);
+    scanf("%d", &E);
+    vector< vector<int> > Graph(V);
+    for (int i = 0; i < E; i++)
+    {
+        int start, end;
+        scanf("%d", start);
+        scanf("%d", end);
+        if (start != end)
+            Graph[start].push_back(end); 
+    }
+    
+    cout << number_of_required_edges(Graph) << endl;
+}
