@@ -14,24 +14,15 @@ vector<vector<int>> Revers_Graph(const vector<vector<int>>& Graph)
 
 void DFS_make_order_of_vertices(const vector<vector<int>>& Graph, const int vertex, vector<bool>& used, vector<int>& order)
 {
-//    cout << "enter in DFS_make_order_of_vertices. vertex = " << vertex << endl;
-
     used[vertex] = true;
     for(int item : Graph[vertex])
-    {
-        if (!used[item])
-        {
-            DFS_make_order_of_vertices(Graph, item, used, order);
-        }
-    }
+        if (!used[item]) DFS_make_order_of_vertices(Graph, item, used, order);
     order.push_back(vertex);
 }
 
 //функция возвращает перевёрнутый порядок обхода вершин
 vector<int>  reversed_order_of_vertices(const vector<vector<int>>& Graph)
 {
-//    cout << "enter in reversed_order_of_vertices" << endl;
-
     vector<int> order;
     vector<bool> used(Graph.size(), false);
     for (int i = 0; i < Graph.size(); i++)
@@ -43,15 +34,11 @@ vector<int>  reversed_order_of_vertices(const vector<vector<int>>& Graph)
 void DFS_in_CSC(const vector<vector<int>>& Graph, const int vertex, vector<bool>& used, const int component_number,
                 vector<int>& CSC_vertex_belongs, vector<int>& vertex_of_this_CSC)
 {
-//    cout << "enter in DFS_in_CSC. vertex = " << vertex << ", comp_numb = " << component_number << endl;
-
     used[vertex] = true;
     CSC_vertex_belongs[vertex] = component_number;
     vertex_of_this_CSC.push_back(vertex);
     for (int neib_vert : Graph[vertex])
-    {
         if (!used[neib_vert]) DFS_in_CSC(Graph, neib_vert, used, component_number, CSC_vertex_belongs, vertex_of_this_CSC);
-    }
 }
 
 //функция найдёт компоненты сильной связности (для этого ей нужен порядок обхода)
@@ -59,12 +46,9 @@ void DFS_in_CSC(const vector<vector<int>>& Graph, const int vertex, vector<bool>
 void find_CSC(const vector<vector<int>>& Graph, const vector<int>& bypass_order,
               vector<int>& CSC_vertex_belongs, vector<vector<int>>& vertex_of_CSC)
 {
-//    cout << "enter in find_CSC" << endl;
-
     int component_number = 0;
     vector<bool> used(Graph.size(),false);
     for (int i : bypass_order)
-    {
         if (!used[i])
         {
             vector<int> vertex_of_this_CSC;
@@ -72,16 +56,12 @@ void find_CSC(const vector<vector<int>>& Graph, const vector<int>& bypass_order,
             vertex_of_CSC.push_back(vertex_of_this_CSC);
             component_number++;
         }
-    }
 }
 
 //ответ = max {количество компонент сильной связности, не имеющих исходящих рёбер ,
 //               количество компонент сильной связности, не имеющих входящих рёбер  }
 int number_of_required_edges(const vector<vector<int>>& Graph, const vector<vector<int>>& Reversed_Graph)
 {
-//    cout << "enter in number_of_required_edges. Arguments: Graph(" << Graph.size() << "), " <<
-//            "Reversed_Graph(" << Reversed_Graph.size() << ")" << endl;
-
     //найдём компоненты сильной связности (алгоритм Косарайю)
 
     //хотим узнать, в каком порядке нужно пройти исходный граф, чтобы найти компоненты сильной связности
@@ -96,8 +76,6 @@ int number_of_required_edges(const vector<vector<int>>& Graph, const vector<vect
 
     find_CSC(Graph, reverse_bypass_order, CSC_vertex_belongs, vertex_of_CSC);
 
-//    cout << "start calculating answer" << endl;
-
     if (vertex_of_CSC.size() == 1) return 0;
     else
     {
@@ -105,32 +83,18 @@ int number_of_required_edges(const vector<vector<int>>& Graph, const vector<vect
         int count_OUT_edges = 0;
         for(int component = 0; component < vertex_of_CSC.size(); component++)
         {
-//            cout << "calculating edges for comp = " << component << endl;
-
             bool flag_IN = false; //есть ли ребро входящее
             bool flag_OUT = false; //есть ли ребро исходящее
 
             for(int vert : vertex_of_CSC[component])
             {
-                if (flag_IN && flag_OUT)
-                {
-
-//                    cout << "\t component " << component << " has as IN, as OUT edges" << endl;
-
-                    break;
-                }
+                if (flag_IN && flag_OUT) break;
                 else
                 {
-
-//                    cout << "\t checking vert " << vert << endl;
-
                     for(int neib_vert : Graph[vert])
                     {
                         if(CSC_vertex_belongs[neib_vert] != component)
                         {
-
-//                            cout << "\t\t there is OUT edge to " << neib_vert << "  from comp=" << CSC_vertex_belongs[neib_vert] << endl;
-
                             flag_OUT = true;
                             break;
                         }
@@ -139,9 +103,6 @@ int number_of_required_edges(const vector<vector<int>>& Graph, const vector<vect
                     {
                         if(CSC_vertex_belongs[r_neib_vert] != component)
                         {
-
-//                            cout << "\t\t there is IN edge from " << r_neib_vert << "  from comp=" << CSC_vertex_belongs[r_neib_vert] << endl;
-
                             flag_IN = true;
                             break;
                         }
@@ -151,7 +112,6 @@ int number_of_required_edges(const vector<vector<int>>& Graph, const vector<vect
             if (!flag_IN) count_IN_edges++;
             if (!flag_OUT) count_OUT_edges++;
         }
-//        cout << "count_IN_edges = " << count_IN_edges << ", count_OUT_edges = " << count_OUT_edges << endl;
         return max(count_IN_edges, count_OUT_edges);
     }
 
